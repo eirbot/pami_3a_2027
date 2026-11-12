@@ -1,0 +1,7 @@
+pyserial
+psutil
+numpy
+smbus2
+opencv-contrib-python
+adafruit-circuitpython-dotstar
+adafruit-blinka

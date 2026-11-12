@@ -1,0 +1,67 @@
+{
+    "audio": {
+        "enabled": true,
+        "tracks": {
+            "end": "outro.mp3",
+            "intro": "intro.mp3",
+            "match": "match_loop.mp3"
+        },
+        "volume": 0.8
+    },
+    "avoidance": true,
+    "camera": {
+        "enabled": true,
+        "resolution": [1640, 1232],
+        "fps": 10,
+        "affichage": [820, 616],
+        "rotation_180": true,
+        "tuning": "imx219_noir.json",
+        "champ_horizontal_deg": 62.2,
+        "intrinseques": null,
+        "montage": {"x": 0, "y": 0, "z": 300, "lacet": 0, "tangage": 20, "roulis": 0},
+        "prise": {"distance_mm": 300},
+        "aruco": {
+            "dictionnaire": "DICT_4X4_50",
+            "echelle": 0.5,
+            "tags": {
+                "13": {"taille_mm": 50, "orientation": "vertical", "z": null}
+            }
+        }
+    },
+    "gpio": {
+        "pins": {
+            "BACK": 23,
+            "DOWN": 27,
+            "SELECT": 22,
+            "START": 5,
+            "STOP": 6,
+            "UP": 17
+        },
+        "use_buttons": true
+    },
+    "leds": {
+        "luminosite": 0.1
+    },
+    "lidar": {
+        "baudrate": 460800,
+        "proche_mm": 420,
+        "seuil_mm": 550,
+        "filtre_table": true,
+        "marge_table_mm": 40,
+        "montage": {"x": 0, "y": 0, "angle": 0, "sens": -1},
+        "port": "/dev/lidar"
+    },
+    "lidar_mode": "MATCH",
+    "lidar_simu": false,
+    "skip_homologation": false,
+    "static_strat": "3b_pouss_plus",
+    "strat_mode": "STATIC",
+    "team": "BLEUE",
+    "localisation": {
+        "odo_sigma_deg_par_m": 1.0,
+        "odo_sigma_deg_par_tour": 3.0,
+        "odo_sigma_mm_par_m": 20.0,
+        "sigma_init_deg": 1.0,
+        "sigma_init_mm": 10.0
+    }
+}
