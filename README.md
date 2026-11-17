@@ -47,6 +47,9 @@ ssh root@<ip>
 cd ~/Rasp && ./init.sh               # venv, dépendances, service robot_launcher
 ```
 
+Sous Windows (sans rsync), même chose avec
+`powershell -ExecutionPolicy Bypass -File tools\deploy.ps1 root@<ip>`.
+
 Périphériques attendus : `/dev/lidar`, `/dev/esp`, à créer par des règles
 udev selon les adaptateurs USB-série. Exemple pour le LiDAR (puce CP210x, à vérifier avec `lsusb`) :
 
