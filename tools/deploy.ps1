@@ -13,21 +13,22 @@ $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $Archive = Join-Path ([System.IO.Path]::GetTempPath()) "deploy_robot_$PID.tar"
 
 try {
-    # Une seule archive : Rasp/ à la racine, ESP/ dans ESP/. La config.json du dépôt est renommée
-    # config.json.depot ; la carte ne la garde que si elle n'a pas déjà sa config.json.
+    # Une seule archive : Rasp/ à la racine (avec la config.json du dépôt), ESP/ dans ESP/.
+    # (Pas d'option -s : le tar de Windows est compilé sans expressions régulières.)
     & tar -cf $Archive `
         --exclude=.venv --exclude=__pycache__ --exclude=*.pyc --exclude=*.log `
         --exclude=./logs --exclude=./LiDAR/lidar_udp --exclude=.pio --exclude=.vscode `
-        -s ",^\./config\.json$,./config.json.depot," `
         -C (Join-Path $Root "Rasp") . `
         -C $Root ESP
     if ($LASTEXITCODE -ne 0) { throw "Échec de la création de l'archive (tar)" }
 
-    # Côté carte : extraction, config.json conservée, retrait des fins de ligne Windows (CRLF) des
-    # scripts au cas où git les aurait converties au clonage (sinon bash/python refusent de les lancer),
-    # et droit d'exécution des .sh (perdu en passant par Windows).
-    $Distant = "mkdir -p '$Dossier' && cd '$Dossier' && tar -xvf - --no-same-owner " +
-        "&& { [ -e config.json ] || mv config.json.depot config.json; rm -f config.json.depot; } " +
+    # Côté carte : la config.json de la carte est mise de côté puis remise après l'extraction (même si
+    # celle-ci échoue), donc celle du dépôt n'est gardée qu'au premier envoi. Puis retrait des fins de
+    # ligne Windows (CRLF) des scripts au cas où git les aurait converties au clonage (sinon bash/python
+    # refusent de les lancer), et droit d'exécution des .sh (perdu en passant par Windows).
+    $Distant = "mkdir -p '$Dossier' && cd '$Dossier' " +
+        "&& { [ ! -e config.json ] || mv -f config.json .config.json.carte; } " +
+        "&& { tar -xvf - --no-same-owner; s=`$?; [ ! -e .config.json.carte ] || mv -f .config.json.carte config.json; [ `$s -eq 0 ]; } " +
         "&& find . -path ./.venv -prune -o \( -name '*.sh' -o -name '*.py' \) -type f -exec sed -i 's/\r`$//' {} + " +
         "&& find . -path ./.venv -prune -o -name '*.sh' -type f -exec chmod +x {} +"
 
