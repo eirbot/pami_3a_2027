@@ -74,6 +74,30 @@ La dernière ligne donne l'état d'évitement que le robot enverrait à l'ESP. P
 un objet devant le robot : il doit apparaître au-dessus de `R`. `main_robot.py` ne doit pas tourner en
 même temps (`./stop.sh`).
 
+## Tester les moteurs à la main
+
+`test_moteurs.py` parle directement à l'ESP moteurs sur `/dev/esp`, sans `main_robot.py` (à arrêter
+avant : `./stop.sh`, un seul programme sur le port). Pour un premier essai, mettre le robot sur cales
+(roues en l'air).
+
+```bash
+cd ~/Rasp
+.venv/bin/python test_moteurs.py                  # avance, recule, tourne à gauche puis à droite (1 s chacun)
+.venv/bin/python test_moteurs.py --vitesse 50     # plus lent (mm/s ; rotation à 2 x vitesse en deg/s)
+.venv/bin/python test_moteurs.py --duree 2        # 2 s par mouvement
+.venv/bin/python test_moteurs.py --goto 200 0 0   # GoTo (x mm, y mm, cap deg) depuis la pose remise à 0
+.venv/bin/python test_moteurs.py --ecoute         # ne bouge pas : affiche l'odométrie (pousser le robot à la main)
+.venv/bin/python test_moteurs.py --port /dev/ttyUSB0
+```
+
+Après chaque mouvement, le script affiche la distance et l'angle attendus et ceux mesurés par
+l'odométrie de l'ESP. Attention : l'odométrie est calculée à partir des pas envoyés aux drivers, elle ne
+voit pas une roue qui tourne à l'envers ou qui patine. Il faut donc regarder le robot : s'il recule au
+lieu d'avancer ou tourne du mauvais côté, inverser `DIR_HIGH_FORWARD_RIGHT` / `_LEFT` ; si la distance
+ou l'angle parcourus (mesurés au mètre) ne sont pas les bons, corriger `WHEEL_DIAMETER_MM` /
+`WHEEL_BASE_MM` (tout est dans `ESP/src/motors/config.h`). Ctrl+C arrête les moteurs avant de quitter. « Aucune odométrie reçue » : l'ESP n'a pas le
+firmware moteurs (`./flash_esp.sh moteurs`) ou ce n'est pas le bon port (`./flash_esp.sh --ports`).
+
 ## Flasher un ESP32 depuis la carte
 
 `tools/deploy.sh` copie aussi le firmware (`ESP/`) dans `~/Rasp/ESP`. Sur la carte :
